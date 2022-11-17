@@ -7,5 +7,11 @@
 COORD position = { 0,0 };
 CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
 HANDLE hConsole;
+struct tm* loc_time;
+int correct_H = 0;
+int correct_M = 0;
+HANDLE hClock;
+void StopWather();
 void Clock();
 void Timer(int);
+void Settings();
