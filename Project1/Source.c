@@ -2,7 +2,6 @@
 
 main() {
 	system("chcp 1251>nul");
-	HANDLE hWather = {0};
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	hClock = CreateThread(NULL, NULL, Clock, NULL, CREATE_SUSPENDED, NULL);
 	ResumeThread(hClock);
@@ -10,10 +9,10 @@ main() {
 	while (1)
 	{
 		scanf("%s", str);
-		if (strstr(str, "stop")) {
+		if (strstr(str, "clockstop")) {
 			SuspendThread(hClock);
 		}
-		else if (strstr(str, "resume")) {
+		else if (strstr(str, "clockreume")) {
 			ResumeThread(hClock);
 		}
 		else if (strstr(str, "timer")) {
@@ -27,26 +26,15 @@ main() {
 			SuspendThread(hClock);
 			Settings();
 		}
-		else if (strstr(str, "stopwatch")) {
-			SuspendThread(hClock);
-			hWather = CreateThread(NULL, NULL, StopWather, NULL, 0, NULL);
-		}
 		else if (strstr(str, "exitstopwatch")) {
-			TerminateThread(hWather,NULL);
+			TerminateThread(hWather, NULL);
 			system("pause");
 			system("cls");
 			ResumeThread(hClock);
 		}
-		else if (strstr(str, "stopstopwatch")) {
-			SuspendThread(hWather);
-			system("pause");
-			system("cls");
-			ResumeThread(hClock);
-		}
-		else if (strstr(str, "resumestopwatch")) {
+		else if (strstr(str, "watch")) {
 			SuspendThread(hClock);
-			system("cls");
-			ResumeThread(hWather);
+			hWather = CreateThread(NULL, NULL, StopWather, NULL, 0, 0);
 		}
 	}
 }
@@ -74,8 +62,9 @@ void Timer(int trigger) {
 	while (sec < trigger)
 	{
 		sec = (clock() - ttime) / CLOCKS_PER_SEC;
-		system("cls");
+		SetConsoleCursorPosition(hConsole, position);
 		printf("Осталось: %d\n", trigger - sec);
+		Sleep(100);
 	}
 	printf("Время зокончилось");
 	system("pause");
@@ -90,10 +79,10 @@ void StopWather() {
 	while (1)
 	{
 		sec = (clock() - ttime) / CLOCKS_PER_SEC;
-		system("cls");
-		printf("Прошло времени: %d\n",sec);
+		SetConsoleCursorPosition(hConsole, position);
+		printf("Прошло времени: %d\n", sec);
+		Sleep(100);
 	}
-	ExitThread(0);
 }
 
 void Settings() {
@@ -107,7 +96,7 @@ void Settings() {
 		loc_time->tm_hour += correct_H;
 		loc_time->tm_min += correct_M;
 		strftime(buffer, 100, "%H:%M", loc_time);
- 		printf("Текущее время: %s\n\nИзменить часы - 1\nИзменить минуты - 2\nНазад - 0\n", buffer);
+		printf("Текущее время: %s\n\nИзменить часы - 1\nИзменить минуты - 2\nНазад - 0\n", buffer);
 		char c;
 		scanf("%c", &c);
 		switch (c)
